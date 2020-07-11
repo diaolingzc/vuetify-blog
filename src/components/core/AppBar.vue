@@ -2,6 +2,7 @@
   <v-app-bar
     app
     flat
+    fixed
     hide-on-scroll
     color="#ffffff"
   >
@@ -21,18 +22,54 @@
           max-width="48"
           @click="$vuetify.goTo(0)"
         /> -->
-
-        <v-btn
-          v-for="(link, i) in links"
+        <div
+          v-for="(category, i) in categories"
           :key="i"
-          v-bind="link"
           class="hidden-sm-and-down"
-          text
-          @click="onClick($event, link)"
         >
-          {{ link.text }}
-        </v-btn>
+          <v-menu
+            v-if="category.children"
+            open-on-hover
+            rounded="lg"
+            offset-y
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                text
+                v-on="on"
+              >
+                {{ category.title }}
 
+                <v-icon
+                  right
+                >
+                  mdi-menu-down
+                </v-icon>
+              </v-btn>
+            </template>
+
+            <v-list>
+              <v-list-item
+                v-for="(item, ci) in category.children"
+                :key="ci"
+                @click="onClick(item)"
+              >
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+
+          <v-btn
+            v-else
+            v-bind="category"
+            class="hidden-sm-and-down"
+            text
+            @click="onClick(category)"
+          >
+            {{ category.title }}
+          </v-btn>
+        </div>
         <v-spacer />
       </v-row>
     </v-container>
@@ -40,27 +77,32 @@
 </template>
 
 <script>
-  // Utilities
-  import {
-    mapGetters,
-    mapMutations,
-  } from 'vuex'
+// Utilities
+  import { mapGetters, mapActions } from 'vuex'
 
   export default {
     name: 'CoreAppBar',
 
     computed: {
-      ...mapGetters(['links']),
+      ...mapGetters(['categories', 'categoryid']),
+    },
+
+    created () {
+      if (!this.categories) {
+        this.setCategories()
+      }
     },
 
     methods: {
-      ...mapMutations(['toggleDrawer']),
-      onClick (e, item) {
-        e.stopPropagation()
-
-        if (item.to || !item.href) return
-
-        this.$vuetify.goTo(item.href.endsWith('!') ? 0 : item.href)
+      ...mapActions({
+        toggleDrawer: 'app/toggleDrawer',
+        setCategoryId: 'app/setCategoryId',
+        setCategories: 'app/setCategories',
+      }),
+      onClick (item) {
+        console.log(item)
+        this.setCategoryId(item.id)
+        if (this.$route.name !== 'home') this.$router.push({ name: 'home' })
       },
     },
   }

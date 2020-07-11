@@ -1,8 +1,17 @@
 import Vue from 'vue'
-import BaseBtn from '@/components/base/Btn'
-import BaseCard from '@/components/base/Card'
-import BaseSubheading from '@/components/base/Subheading'
+import upperFirst from 'lodash/upperFirst'
+import camelCase from 'lodash/camelCase'
 
-Vue.component(BaseBtn.name, BaseBtn)
-Vue.component(BaseCard.name, BaseCard)
-Vue.component(BaseSubheading.name, BaseSubheading)
+const requireComponent = require.context(
+  '@/components/base', true, /\.vue$/,
+)
+
+requireComponent.keys().forEach(fileName => {
+  const componentConfig = requireComponent(fileName)
+
+  const componentName = upperFirst(
+    camelCase(fileName.replace(/^\.\//, '').replace(/\.\w+$/, '')),
+  )
+
+  Vue.component(`Base${componentName}`, componentConfig.default || componentConfig)
+})

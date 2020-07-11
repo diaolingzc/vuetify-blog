@@ -5,10 +5,6 @@
     <core-drawer />
 
     <core-view />
-
-    <core-footer />
-
-    <core-cta />
   </v-app>
 </template>
 
@@ -17,11 +13,21 @@
     name: 'App',
 
     components: {
-      CoreCta: () => import('@/components/core/Cta'),
+      // CoreCta: () => import('@/components/core/Cta'),
       CoreDrawer: () => import('@/components/core/Drawer'),
-      CoreFooter: () => import('@/components/core/Footer'),
+      // CoreFooter: () => import('@/components/core/Footer'),
       CoreAppBar: () => import('@/components/core/AppBar'),
       CoreView: () => import('@/components/core/View'),
     },
   }
 </script>
+
+<style>
+::-webkit-scrollbar {
+    display: none;
+    width: 0 !important;
+    height: 0 !important;
+    -webkit-appearance: none;
+    background: transparent;
+}
+</style>
